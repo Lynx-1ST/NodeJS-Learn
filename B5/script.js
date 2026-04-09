@@ -19,3 +19,23 @@ fetchAPI("http://localhost:3000/products").then((data) => {
   const productList = document.querySelector("#product-list");
   productList.innerHTML = htmls;
 });
+
+let delay = (ms) =>
+  new Promise((resolve, reject) => {
+    if (ms > 0) {
+      setTimeout(resolve, ms);
+    } else {
+      console.log(reject);
+    }
+  });
+async function runTest() {
+  console.log("X");
+  await delay(2000);
+  console.log("Y");
+}
+
+const tryFetch = new Promise((resolve, reject) => {
+  fetchAPI("https://localhost:3000/products").then((data) => {
+    return data;
+  });
+});
