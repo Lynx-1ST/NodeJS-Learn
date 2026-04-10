@@ -1,0 +1,40 @@
+extends layouts/default.pug
+include mixins/box-head.pug
+
+block main
+    +box-head("Danh sách Sản phẩm", "Hiển thị đầy đủ thông tin: Hình ảnh, Mô tả, Đánh giá...")
+
+    div.row
+        if products.length > 0
+            each item in products
+                div.col-md-4.mb-4
+                    div.card.shadow-sm.h-100
+
+                        //- 1. HÌNH ẢNH SẢN PHẨM (THUMBNAIL)
+                        //- LƯU Ý: Trong Pug, khi gọi biến vào bên trong thuộc tính (như src, href), 
+                        //- chúng ta gõ trực tiếp tên biến (item.thumbnail) chứ KHÔNG DÙNG #{}
+                        img.card-img-top(src=item.thumbnail, alt=item.title, style="height: 250px; object-fit: cover;")
+
+                        div.card-body
+                            //- 2. TIÊU ĐỀ
+                            h5.card-title.text-primary.fw-bold #{item.title}
+
+                            //- 3. THƯƠNG HIỆU & RATING 
+                            div.mb-3
+                                span.badge.bg-secondary.me-2 #{item.brand}
+                                span.text-warning.fw-bold ⭐ #{item.rating} / 5
+
+                            //- 4. GIÁ TIỀN 
+                            p.card-text.mb-2 Giá: 
+                                span.text-danger.fw-bold.fs-5 #{item.price.toLocaleString('vi-VN')} VNĐ
+
+                            //- 5. MÔ TẢ
+                            p.card-text.text-muted(style="font-size: 14px;") #{item.description}
+
+                        div.card-footer.bg-transparent.border-top-0
+                            button.btn.btn-primary.w-100 Thêm vào giỏ hàng
+
+        else
+            div.col-12
+                div.alert.alert-warning(role="alert")
+                    | Hiện tại chưa có sản phẩm nào trong hệ thống!
