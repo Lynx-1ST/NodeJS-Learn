@@ -1,5 +1,5 @@
 import express from "express";
-import Product from "../../models/product.model.js"; // Import trực tiếp ở đây
+import Product from "../../models/product.model.js";
 
 const routes = express.Router();
 

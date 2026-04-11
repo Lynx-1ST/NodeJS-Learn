@@ -2,39 +2,75 @@ extends layouts/default.pug
 include mixins/box-head.pug
 
 block main
-    +box-head("Danh sách Sản phẩm", "Hiển thị đầy đủ thông tin: Hình ảnh, Mô tả, Đánh giá...")
+    style.
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important; 
+        }
+        .product-img {
+            height: 220px;
+            object-fit: cover;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+        }
 
-    div.row
+    +box-head("Sản Phẩm Nổi Bật", "Khám phá bộ sưu tập mới nhất với giá cực sốc")
+
+    //- Dùng g-4 (gap) để tạo khoảng cách đều nhau giữa các sản phẩm
+    div.row.g-4.mb-5
         if products.length > 0
             each item in products
-                div.col-md-4.mb-4
-                    div.card.shadow-sm.h-100
+                //- 
+                div.col-6.col-md-4.col-lg-3
+                    div.card.product-card.h-100.border-0.shadow-sm
 
-                        //- 1. HÌNH ẢNH SẢN PHẨM (THUMBNAIL)
-                        //- LƯU Ý: Trong Pug, khi gọi biến vào bên trong thuộc tính (như src, href), 
-                        //- chúng ta gõ trực tiếp tên biến (item.thumbnail) chứ KHÔNG DÙNG #{}
-                        img.card-img-top(src=item.thumbnail, alt=item.title, style="height: 250px; object-fit: cover;")
+                        //- Badge
+                        div.position-absolute.p-2(style="top: 0; right: 0; z-index: 10;")
+                            span.badge.bg-danger.rounded-pill Hot
 
-                        div.card-body
-                            //- 2. TIÊU ĐỀ
-                            h5.card-title.text-primary.fw-bold #{item.title}
+                        //- Picture
+                        a(href=`/products/detail/${item._id}`)
+                            img.card-img-top.product-img(
+                                src=item.thumbnail || 'https://via.placeholder.com/300x300?text=No+Image'
+                                alt=item.title
+                            )
 
-                            //- 3. THƯƠNG HIỆU & RATING 
-                            div.mb-3
-                                span.badge.bg-secondary.me-2 #{item.brand}
-                                span.text-warning.fw-bold ⭐ #{item.rating} / 5
+                        div.card-body.d-flex.flex-column
+                            //- Danh mục nhỏ ở trên
+                            span.text-muted.small.mb-1 #{item.category || 'Chưa phân loại'}
 
-                            //- 4. GIÁ TIỀN 
-                            p.card-text.mb-2 Giá: 
-                                span.text-danger.fw-bold.fs-5 #{item.price.toLocaleString('vi-VN')} VNĐ
+                            //- Tên sản phẩm
+                            a.text-decoration-none.text-dark(href=`/products/detail/${item._id}`)
+                                h5.card-title.fs-6.fw-bold.line-clamp-2.mb-2(title=item.title) #{item.title}
 
-                            //- 5. MÔ TẢ
-                            p.card-text.text-muted(style="font-size: 14px;") #{item.description}
+                            //- Đánh giá 
+                            div.mb-2(style="font-size: 12px;")
+                                span.text-warning ⭐⭐⭐⭐⭐ 
+                                span.text-muted.ms-1 (#{item.rating || 5.0})
 
-                        div.card-footer.bg-transparent.border-top-0
-                            button.btn.btn-primary.w-100 Thêm vào giỏ hàng
+                            //- Phần dưới cùng (Giá & Nút mua)
+                            div.mt-auto
+                                div.mb-3
+                                    span.text-danger.fw-bold.fs-5 #{item.price ? item.price.toLocaleString('vi-VN') : 0} $
+                                    if item.price
+                                        del.text-muted.small.ms-2 #{(item.price * 1.2).toLocaleString('vi-VN')} $
+
+                                div.d-grid
+                                    button.btn.btn-outline-primary.btn-sm.fw-bold(type="button") 
+                                        | 🛒 Thêm vào giỏ
 
         else
+            //- Giao diện khi không có sản phẩm
             div.col-12
-                div.alert.alert-warning(role="alert")
-                    | Hiện tại chưa có sản phẩm nào trong hệ thống!
+                div.alert.alert-light.text-center.p-5.border.rounded-3(role="alert")
+                    h3.text-muted 😢 Ôi không!
+                    p.mb-0 Hiện tại cửa hàng đang trống. Vui lòng quay lại sau nhé!
